@@ -16,6 +16,7 @@
 
 
 char board[HEIGHT][WIDTH];
+int score = 0;
 
 
 
@@ -46,7 +47,7 @@ void put_cells(){
 }
 
 
-bool check(){
+bool is_end(){
 	int cell_x = -1;
 	int cell_y = -1;
 	int is_broke = 0;
@@ -70,6 +71,23 @@ bool check(){
 }
 
 
+void is_full(){
+	for(int i=1; i<HEIGHT-1; i++){
+		int count = 0;
+		for(int j=1; j<WIDTH-1; j++){
+			if(board[i][j] == CELL) count++;
+		}
+
+		if(count == WIDTH - 2){
+			score += 5;
+			for(int k=1; k<WIDTH-1; k++){
+				board[i][k] = board[i-1][k];
+				board[i-1][k] = EMPTY;
+			}
+		}
+	}
+}
+		
 
 void auto_move(){
 	int cell_x = -1;
@@ -133,6 +151,8 @@ void printboard(){
 		}
 		printw("\n");
 	}
+
+	mvprintw(rows/2 + 15, cols/2 - 30, "Score: %d", score);
 }
 
 
@@ -149,8 +169,13 @@ int main(){
 
 	while(1){
 		clear();
-		if(check()) put_cells();
+
+		if(is_end()) put_cells();
+		
+		is_full(); 
+
 		printboard();
+
 		int ch;
 		ch = getch();
 		if(ch == KEY_LEFT)
@@ -166,6 +191,7 @@ int main(){
 			mvprintw(rows/2-10, cols/2-10, "Game is over!");
 			break;
 		}
+
 		refresh();
 		//sleep(2);
 	}
