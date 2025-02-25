@@ -4,17 +4,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 
 
-#define WALL 	"="
-#define CELL 	"#"
-#define EMPTY 	" "
+#define WALL 	'='
+#define CELL 	'#'
+#define EMPTY 	' '
 #define HEIGHT 	30
 #define WIDTH 	60
 
 
-char * board[HEIGHT][WIDTH];
+char board[HEIGHT][WIDTH];
 
 
 
@@ -40,12 +41,12 @@ void put_cells(){
 
 
 void auto_move(){
-	int cell_x = 0;
-	int cell_y = 0;
+	int cell_x = -1;
+	int cell_y = -1;
 	int a = 0;
 	for(int i=0; i<HEIGHT; i++){
 		for(int j=0; j<WIDTH; j++){
-			if(strcmp(board[i][j],CELL) == 0){
+			if(board[i][j] == CELL){
 				cell_x = j;
 				cell_y = i;
 				a = 1;
@@ -55,9 +56,10 @@ void auto_move(){
 		if(a == 1) break;
 	}
 
-	if(cell_y+1 < HEIGHT){
-		strcpy(board[cell_y][cell_x], EMPTY);
-		strcpy(board[cell_y+1][cell_x], CELL);
+	if(cell_y == -1 || cell_x == -1) return;
+	else if(cell_y + 1 < HEIGHT - 1){
+		board[cell_y][cell_x] = EMPTY;
+		board[cell_y+1][cell_x] = CELL;
 	}
 }
 
@@ -70,32 +72,32 @@ void printboard(){
 
 	for(int i=0; i<HEIGHT; i++){
 		for(int j=0; j<WIDTH; j++){
-			mvprintw(start_row+i, start_col+j , "%s", board[i][j]);
+			mvprintw(start_row+i, start_col+j , "%c", board[i][j]);
 		}
 		printw("\n");
 	}
 }
 
 
-void play(){
+
+int main(){
+	srand(time(NULL));
+
+	put_walls();
+	put_cells();
+
 	initscr();
 
-	printboard();		
+	while(1){
+		clear();
+		printboard();
+		auto_move();
+		refresh();
+		sleep(2);
+	}
 
 	refresh();
 	getch();
 	endwin();
-}
-
-
-int main(){
-	put_walls();
-	put_cells();
-
-	while(1){
-		play();
-		auto_move();
-		sleep(1 % 1000);
-	}
 	return 0;
 }
