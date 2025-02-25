@@ -2,7 +2,7 @@
 CC = gcc
 
 #Flags
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -lncurses
 
 #Header files
 #HDR = tetris.h
